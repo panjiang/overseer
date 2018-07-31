@@ -358,7 +358,12 @@ func (mp *master) fork() error {
 	e = append(e, envNumFDs+"="+strconv.Itoa(len(mp.slaveExtraFiles)))
 	cmd.Env = e
 	//inherit master args/stdfiles
-	cmd.Args = os.Args
+	args := os.Args
+	if mp.ForkArg != "" {
+		args = append([]string{os.Args[0], mp.ForkArg}, os.Args[1:]...)
+	}
+
+	cmd.Args = args
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

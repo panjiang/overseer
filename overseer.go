@@ -59,6 +59,8 @@ type Config struct {
 	NoRestartAfterFetch bool
 	//Fetcher will be used to fetch binaries.
 	Fetcher fetcher.Interface
+	//Mark fork process in args[1] eg: "-fork"
+	ForkArg string
 }
 
 func validate(c *Config) error {

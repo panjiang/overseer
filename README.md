@@ -1,6 +1,6 @@
 # overseer
 
-[![GoDoc](https://godoc.org/github.com/jpillora/overseer?status.svg)](https://godoc.org/github.com/jpillora/overseer)
+[![GoDoc](https://godoc.org/github.com/panjiang/overseer?status.svg)](https://godoc.org/github.com/panjiang/overseer)
 
 `overseer` is a package for creating monitorable, gracefully restarting, self-upgrading binaries in Go (golang). The main goal of this project is to facilitate the creation of self-upgrading binaries which play nice with standard process managers, secondly it should expose a small and simple API with reasonable defaults.
 
@@ -14,11 +14,12 @@ Commonly, graceful restarts are performed by the active process (*dark blue*) cl
 * Works with process managers (systemd, upstart, supervisor, etc)
 * Graceful, zero-down time restarts
 * Easy self-upgrading binaries
+* Can mark fork progress with constom argument (+@Jiang)
 
 ### Install
 
 ```sh
-go get github.com/jpillora/overseer
+go get github.com/panjiang/overseer
 ```
 
 ### Quick example
@@ -34,21 +35,28 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/jpillora/overseer"
-	"github.com/jpillora/overseer/fetcher"
+	"github.com/panjiang/overseer"
+	"github.com/panjiang/overseer/fetcher"
 )
 
 //create another main() to run the overseer process
 //and then convert your old main() into a 'prog(state)'
 func main() {
-	overseer.Run(overseer.Config{
+	err := overseer.Run(overseer.Config{
 		Program: prog,
 		Address: ":3000",
 		Fetcher: &fetcher.HTTP{
 			URL:      "http://localhost:4000/binaries/myapp",
 			Interval: 1 * time.Second,
 		},
+		ForkArg: "-fork", // mark fork progress 
 	})
+
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		log.Println("Shutdown")
+	}
 }
 
 //prog(state) runs in a child process
@@ -73,7 +81,7 @@ func prog(state overseer.State) {
 * Once a binary is received, it is run with a simple echo token to confirm it is a `overseer` binary.
 * Except for scheduled restarts, the active child process exiting will cause the main process to exit with the same code. So, **`overseer` is not a process manager**.
 
-See [Config](https://godoc.org/github.com/jpillora/overseer#Config)uration options [here](https://godoc.org/github.com/jpillora/overseer#Config) and the runtime [State](https://godoc.org/github.com/jpillora/overseer#State) available to your program [here](https://godoc.org/github.com/jpillora/overseer#State).
+See [Config](https://godoc.org/github.com/panjiang/overseer#Config)uration options [here](https://godoc.org/github.com/panjiang/overseer#Config) and the runtime [State](https://godoc.org/github.com/panjiang/overseer#State) available to your program [here](https://godoc.org/github.com/panjiang/overseer#State).
 
 ### More examples
 
@@ -158,12 +166,12 @@ func main() {
 
 ### More documentation
 
-* [Core `overseer` package](https://godoc.org/github.com/jpillora/overseer)
-* [Common `fetcher.Interface`](https://godoc.org/github.com/jpillora/overseer/fetcher#Interface)
-	* [File fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#File)
-	* [HTTP fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#HTTP)
-	* [S3 fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#S3)
-	* [Github fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#Github)
+* [Core `overseer` package](https://godoc.org/github.com/panjiang/overseer)
+* [Common `fetcher.Interface`](https://godoc.org/github.com/panjiang/overseer/fetcher#Interface)
+	* [File fetcher](https://godoc.org/github.com/panjiang/overseer/fetcher#File)
+	* [HTTP fetcher](https://godoc.org/github.com/panjiang/overseer/fetcher#HTTP)
+	* [S3 fetcher](https://godoc.org/github.com/panjiang/overseer/fetcher#S3)
+	* [Github fetcher](https://godoc.org/github.com/panjiang/overseer/fetcher#Github)
 
 ### Third-party Fetchers
 
