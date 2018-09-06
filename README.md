@@ -1,5 +1,9 @@
 # overseer
 
+### Update @Jiang
+* Can mark fork progress with constom argument
+* Remove AWS S3 support
+
 [![GoDoc](https://godoc.org/github.com/panjiang/overseer?status.svg)](https://godoc.org/github.com/panjiang/overseer)
 
 `overseer` is a package for creating monitorable, gracefully restarting, self-upgrading binaries in Go (golang). The main goal of this project is to facilitate the creation of self-upgrading binaries which play nice with standard process managers, secondly it should expose a small and simple API with reasonable defaults.
@@ -14,7 +18,6 @@ Commonly, graceful restarts are performed by the active process (*dark blue*) cl
 * Works with process managers (systemd, upstart, supervisor, etc)
 * Graceful, zero-down time restarts
 * Easy self-upgrading binaries
-* Can mark fork progress with constom argument (+@Jiang)
 
 ### Install
 
